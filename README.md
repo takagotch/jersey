@@ -80,4 +80,71 @@ public class SomeResource {
   }
 }
 
+@Path("resource")
+public static class SummaryOfInjectionsResource {
+  @QueryParam("query")
+  String param;
+  
+  @GET
+  public String get(@QueryParam("query") String methodQueryParam) {
+    return "query param: " + param;
+  }
+  
+  @Path("sub-resource-locator")
+  public Class<SubResource> subResourceLocator(@QueryParam("query") String subResourceQueryParam) {
+    return subResource.class;
+  }
+  
+  public SummaryOfInjectionsResource(@QueryParam("query") String constructorQueryParam) {
+  }
+  
+  @Context
+  public void setRequest(Request request) {
+    System.out.println(request != null);
+  }
+}
+
+public static class SubResource {
+  @GET
+  public String get() {
+    return "sub resource";
+  }
+}
+
+import org.glassfish.jersey.server.model.Resurce;
+
+@Path("/item")
+public class ItemResource {
+  @Path("content")
+  public Resource getItemContentResource() {
+    return Resource.from(ItemContentSingletonResource.class);
+  }
+}
+
+@Path("/item")
+public class ItemResource {
+  @Context uriInfo uriInfo;
+  
+  @Path("content")
+  public ItemContentResource getItemContentResource() {
+    return new ItemContentResource();
+  }
+  
+  @GET
+  @Produces("application/xml")
+    public Item get() {}
+  }
+}
+
+public class ItemContentResource {
+  @GET
+  public Response get() {}
+  
+  @PUT
+  @Path("{version}")
+  public void put(@PathParam("version") int version,
+    @Context HttpHeaders headers,
+    byte[] in) {
+  }
+}
 ```
