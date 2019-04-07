@@ -48,4 +48,36 @@ public class UserResource {
   public String getUser(@PathParam("username") String userName) {
   }
 }
+
+@PUT
+public Response putContainer() {
+  System.out.println("PUT CONTAINER " + container);
+  
+  URI uri = uriInfo.getAbsolutePath();
+  Container c = new Container(container, uri.toString());
+  
+  Response r;
+  if (!MemoryStore.MS.hasContainer(c)) {
+    r = Response.created(uri).build();
+  } else {
+    r = Response.noContent().build();
+  }
+  
+  MemoryStore.MS.createContainer(c);
+  return r;
+}
+
+@Path("/myResource")
+@Produces("text/plain")
+public class SomeResource {
+  @GET
+  public String doGetPlainText() {
+  }
+  
+  @GET
+  @Produces("text/html")
+  public String doGetAsHtml() {
+  }
+}
+
 ```
